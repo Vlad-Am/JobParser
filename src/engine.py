@@ -64,6 +64,7 @@ class HH(ApiService):
             json.dump(self.vacancies_dict, file, indent=4, ensure_ascii=False)
         print(f"Отбор осуществлялся из {len(self.vacancies_all)} вакансий(проверка обращения к сервису)")
         return self.vacancies_dict
+    #
 
                     
 
