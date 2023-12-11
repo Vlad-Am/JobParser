@@ -83,16 +83,16 @@ class SuperJobAPI(ApiService):
             for vacancy in self.vacancies_all:
                 if vacancy["currency"] == "rub":
                     try:
-                        self.vac.append([vacancy['client']["title"], vacancy['profession'], vacancy["client"]['link'],
-                                         vacancy['candidat'], vacancy['payment_from'],
+                        self.vac.append([vacancy["id"], vacancy['client']["title"], vacancy['profession'],
+                                         vacancy["client"]['link'], vacancy['candidat'], vacancy['payment_from'],
                                          vacancy['payment_to']])
                     except KeyError:
                         continue
                 params["page"] += 1
         print(self.vac)
         for vacancy in self.vac:
-            vacancies_dict = {"employer": vacancy[0], "name": vacancy[1], "url": vacancy[2], "requirement": vacancy[3],
-                              "salary_from": vacancy[4], "salary_to": vacancy[5]}
+            vacancies_dict = {"id": vacancy[0], "employer": vacancy[1], "name": vacancy[2], "url": vacancy[3],
+                              "requirement": vacancy[4], "salary_from": vacancy[5], "salary_to": vacancy[6]}
             if vacancies_dict["salary_to"] == 0:
                 vacancies_dict["salary_to"] = vacancies_dict["salary_from"]
             self.vacancies_dict.append(vacancies_dict)
