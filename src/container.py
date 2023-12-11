@@ -1,7 +1,9 @@
 import json
 
+from src.engine import HH, SuperJob
 
-class Connector:
+
+class Container:
 
     def __init__(self, vacancy):
         self.vacancy = vacancy
