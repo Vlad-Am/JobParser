@@ -1,12 +1,14 @@
 class Vacancy:
     """Класс для работы с данными из json"""
 
-    def __init__(self, employer=None, name=None, url=None, requirement=None, salary_from=None, salary_to=None, id_vac=None):
+    def __init__(self, employer=None, name=None, url=None, requirement=None, salary_from=None, salary_to=None,
+                 id_vac=None):
+        self.n = None
         self.employer = employer
         self.name = name
         self.url = url
         self.requirement = requirement
-        self.id_vacancy = id
+        self.id_vacancy = id_vac
         try:
             if "<highlighttext>" and "</highlighttext>" in self.requirement:
                 self.requirement = self.requirement.replace("<highlighttext>", "")

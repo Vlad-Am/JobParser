@@ -19,9 +19,10 @@ class HeadHunterAPI(ApiService):
         self.vac = []
         self.vacancies_dict = []
 
+        print("Подключаюсь к HH.ru")
+
     def get_request(self, vacancies):
-        """Метод для отправки запроса на hh, записывает json
-        :return словарь для последующей работы с ним"""
+        """Метод для отправки запроса на hh, записывает json"""
 
         for num in range(49):
             url = "https://api.hh.ru/vacancies"
@@ -56,7 +57,7 @@ class HeadHunterAPI(ApiService):
         with open(f"{vacancies}_hh_ru.json", "w", encoding="UTF-8") as file:
             json.dump(self.vacancies_dict, file, indent=4, ensure_ascii=False)
         print(f"Отбор осуществлялся из {len(self.vac)} вакансий(проверка обращения к сервису)")
-        return
+        return self.vacancies_dict
 
 
 class SuperJobAPI(ApiService):
@@ -70,37 +71,35 @@ class SuperJobAPI(ApiService):
         self.api_key = os.getenv('SJ_API_KEY', "key_error")
 
     def get_request(self, vacancies):
+        """Метод для отправки запроса на superjob, записывает json"""
         url = "https://api.superjob.ru/2.0/vacancies/"
         headers = {"X-Api-App-Id": os.getenv("SJ_API_KEY")}
-        for num in range(20):
+        for num in range(20):  # кол-во просматриваемых страниц
             params = {"keyword": vacancies, "per_page": 100, "area": 113, "page": num}
             response = requests.get(url, headers=headers, params=params)
             response_decode = response.content.decode()
             response.close()
             data = json.loads(response_decode)
-
+            # Присвоили значение списка словарей вакансий словарю_all
             self.vacancies_all = data['objects']
             for vacancy in self.vacancies_all:
                 if vacancy["currency"] == "rub":
                     try:
+                        # Добавили вакансии в список vac
                         self.vac.append([vacancy["id"], vacancy['client']["title"], vacancy['profession'],
                                          vacancy["client"]['link'], vacancy['candidat'], vacancy['payment_from'],
                                          vacancy['payment_to']])
                     except KeyError:
                         continue
                 params["page"] += 1
-        print(self.vac)
+        # Перебираем вакансии полученные с сайта и присваиваем списку словарей значения нужные нам
         for vacancy in self.vac:
             vacancies_dict = {"id": vacancy[0], "employer": vacancy[1], "name": vacancy[2], "url": vacancy[3],
                               "requirement": vacancy[4], "salary_from": vacancy[5], "salary_to": vacancy[6]}
             if vacancies_dict["salary_to"] == 0:
                 vacancies_dict["salary_to"] = vacancies_dict["salary_from"]
             self.vacancies_dict.append(vacancies_dict)
+            # сохраняем в json формате полученный список словарей
         with open(f"{vacancies}_sj.json", "w", encoding="UTF-8") as file:
             json.dump(self.vacancies_dict, file, indent=4, ensure_ascii=False)
-
-        return
-
-
-sj1 = SuperJobAPI().get_request("python")
-print(sj1)
+        return self.vacancies_dict
